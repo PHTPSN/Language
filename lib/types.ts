@@ -1,0 +1,13 @@
+export const STAGES = ["unseen", "encountered", "understood", "assisted_production", "spontaneous_production", "stable"] as const;
+export type Stage = typeof STAGES[number];
+export type EvidenceKind = "encountered" | "recognized" | "help_requested" | "supplied" | "assisted" | "spontaneous" | "failed" | "uncertain";
+export type Evidence = { id: string; itemId: string; kind: EvidenceKind; at: string; turn: number; context: string; domain: string; session: string; source: string; text: string; reason: string; strength: number; assisted: boolean };
+export type ItemState = { stage: Stage; confidence: number; evidenceCount: number; lastSeen: string | null; contexts: string[]; evidence: Evidence[] };
+export type Scene = { id: string; domain: string; title: string; prompt: string; targetId?: string; mode: "practice" | "bridge" | "retrieval"; reason: string };
+export type Message = { id: string; role: "coach" | "learner"; text: string; context: string; at: string; note?: string };
+export type LexicalItem = { id: string; lemma: string; sense: string; zh: string; type: "expression" | "word" | "sense"; pattern: string; hint: string; placeholders: string[]; source: string };
+export type LexicalToken = { surface: string; lemma: string; kind: "known" | "target" | "function" | "name" | "unexpected" | "ambiguous"; start: number; end: number; itemId?: string; reason: string };
+export type Validation = { passed: boolean; tokens: LexicalToken[]; unexpected: LexicalToken[]; missingTargets: string[]; coverage: number; targetIds: string[]; permittedCount: number };
+export type Reading = { text: string; targetIds: string[]; attempts: { text: string; report: Validation; operation: string }[]; createdAt: string; source: string; comprehension?: boolean };
+export type Learner = { version: 1; name: string; l1: "zh"; targetLanguage: "en"; onboarded: boolean; sample: boolean; session: string; sessionCount: number; turn: number; createdAt: string; updatedAt: string; items: Record<string, ItemState>; scene: Scene; messages: Message[]; reading?: Reading; knownBase: string[]; recentInputs: string[]; notice: string; decisions: { at: string; text: string }[] };
+export type Action = { type: "diagnostic"; recognition: string; production: string; name?: string } | { type: "sample" } | { type: "message"; text: string } | { type: "hint" } | { type: "inspect"; itemIds: string[] } | { type: "reading" } | { type: "comprehension"; answer: string } | { type: "session" };
